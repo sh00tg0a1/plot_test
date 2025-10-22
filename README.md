@@ -4,6 +4,8 @@
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+中文 | [English](README_EN.md)
+
 这是一个使用 uv 管理的 Python 数据生成和绘图测试项目，支持多种图表类型和中文字体显示。
 
 ## 项目结构
@@ -64,32 +66,38 @@ plot_test/
    - 支持数据字典和 pandas Series
    - 自动颜色分配
    - 百分比显示
+   - 简洁白底设计
 
 2. **折线图** (`line_chart`)
    - 支持多条线对比
    - 自定义线型和颜色
-   - 网格和图例
+   - **大规模数据优化**：支持 100+ 系列 × 100+ 点
+   - 智能图例：系列数量超过 10 时，自动抽样显示
+   - 自适应渲染：大量系列时自动简化标记和线宽
+   - 简洁无网格设计
 
 3. **柱状图** (`bar_chart`)
    - **分组柱状图**：并排显示多个系列
-   - **堆叠柱状图**：叠加显示多个系列
+   - **堆叠柱状图**：叠加显示多个系列（自动数据对齐）
    - 支持自定义颜色
+   - 智能图例显示
+   - 简洁白底设计
 
 4. **图片导出功能**
    - **Base64 编码**：`figure_to_base64()` 方法
    - **文件保存**：支持 PNG、JPG、SVG 格式
-   - **高分辨率**：可设置 DPI
+   - **高分辨率**：默认 300 DPI
 
 5. **仪表板功能** (`create_dashboard`)
    - 多图表组合显示
    - 自动布局
    - 统一标题和样式
 
-6. **颜色序列**
-   - 预定义 9 种专业配色
-   - 自动循环分配
-   - 支持自定义颜色
-   - 配色方案：`#5470c6, #91cc75, #fac858, #ee6666, #73c0de, #3ba272, #fc8452, #9a60b4, #ea7ccc`
+6. **专业设计风格**
+   - **颜色序列**：预定义 9 种专业配色
+   - **简洁样式**：白色背景，无网格，简洁图例
+   - **中文字体支持**：自动检测系统字体（Windows/Linux/macOS）
+   - **配色方案**：`#5470c6, #91cc75, #fac858, #ee6666, #73c0de, #3ba272, #fc8452, #9a60b4, #ea7ccc`
 
 ## 安装和设置
 
@@ -113,7 +121,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 pip install uv
 ```
 
-### 2. Ubuntu 系统中文字体设置
+### 2. 中文字体设置（可选）
+
+项目已内置自动字体检测功能，支持 Windows、Linux、macOS 系统。
+
+#### Ubuntu/Linux 系统
 
 **自动安装（推荐）：**
 
@@ -129,10 +141,30 @@ sudo apt install fonts-wqy-microhei fonts-noto-cjk
 sudo fc-cache -fv
 ```
 
-**测试字体：**
+#### Windows 系统
+
+系统自带中文字体（微软雅黑、SimHei 等），无需额外安装。
+
+如遇字体问题，运行：
 
 ```bash
-python test_ubuntu_fonts.py
+python fix_windows_font.py
+```
+
+#### 字体测试
+
+```bash
+# 通用测试
+python test/test_font.py
+
+# Ubuntu 专用测试
+python test/test_ubuntu_fonts.py
+
+# Windows 专用测试
+python test_windows_font.py
+
+# 快速测试
+python quick_font_test.py
 ```
 
 ### 3. 安装项目依赖
@@ -176,11 +208,14 @@ uv run python test_data_generation.py
 ### 绘图功能
 
 ```bash
-# 运行绘图演示
-uv run python plot.py
+# 运行绘图测试（生成所有图表）
+uv run python test/test_plot.py
 
-# 运行绘图测试
-uv run python test_plot.py
+# 交互式展示图表
+uv run python test/test_plot.py show
+
+# 运行绘图演示（包含 100 系列大规模数据示例）
+uv run python src/plot.py
 ```
 
 ### 生成的数据文件
@@ -195,7 +230,7 @@ uv run python test_plot.py
 ### 自定义数据生成
 
 ```python
-from data import generate_time_series_data, save_dataframe
+from src.data import generate_time_series_data, save_dataframe
 
 # 生成自定义时间序列数据
 df = generate_time_series_data(start_date='2023-01-01', days=180, freq='W')
@@ -208,10 +243,11 @@ save_dataframe(df, 'my_data', 'excel')
 ### 绘图使用示例
 
 ```python
-from plot import PlotGenerator
+from src.plot import PlotGenerator
+from src.data import generate_sales_data
 import pandas as pd
 
-# 创建绘图器
+# 创建绘图器（自动检测并设置中文字体）
 plotter = PlotGenerator()
 
 # 示例数据
@@ -224,6 +260,7 @@ data = pd.DataFrame({
 # 1. 环形图
 category_data = {'电子产品': 40, '服装': 30, '食品': 20, '其他': 10}
 fig1 = plotter.donut_chart(category_data, "产品销售占比")
+plotter.save_figure(fig1, "my_donut")  # 保存图片
 base64_1 = plotter.figure_to_base64(fig1)  # 转换为 base64
 
 # 2. 折线图

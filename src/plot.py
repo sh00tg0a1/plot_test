@@ -18,19 +18,24 @@ import platform
 # matplotlib.use("QtAgg")
 
 DEFAULT_STYLE = 'default'
+
+# 预定义颜色序列
+COLOR_PALETTE = [
+    '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de',
+    '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'
+]
+
 plt.style.use(DEFAULT_STYLE)
 
 
 class PlotGenerator:
     """绘图生成器类"""
 
-    # 预定义颜色序列
-    COLOR_PALETTE = [
-        '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de',
-        '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'
-    ]
-
-    def __init__(self, figsize=(10, 6), style=DEFAULT_STYLE):
+    def __init__(
+        self,
+        figsize=(10, 6),
+        color_palette=COLOR_PALETTE
+    ):
         """
         初始化绘图生成器
 
@@ -40,17 +45,18 @@ class PlotGenerator:
         """
         # 设置中文字体
         self._setup_chinese_font()
-        
+
         self.figsize = figsize
         self.current_fig = None
         self.current_ax = None
+        self.color_palette = color_palette
 
     def _setup_chinese_font(self):
         """设置中文字体"""
 
         # 根据系统选择字体
         system = platform.system().lower()
-        
+
         if system == 'linux':
             chinese_fonts = [
                 'WenQuanYi Micro Hei',
@@ -82,13 +88,12 @@ class PlotGenerator:
                 'Source Han Sans SC',
                 'DejaVu Sans'
             ]
-        
+
         # 获取所有可用字体
         available_fonts = [f.name for f in fm.fontManager.ttflist]
         print(f"系统中共有 {len(available_fonts)} 个字体")
-        
+
         # 尝试设置字体
-        font_set = False
         for font in chinese_fonts:
             if font in available_fonts:
                 try:
@@ -108,17 +113,18 @@ class PlotGenerator:
         # 统一白底
         self.current_fig.patch.set_facecolor('white')
         self.current_ax.set_facecolor('white')
+
         return self.current_fig, self.current_ax
 
     def _get_colors(self, n_colors: int) -> List[str]:
         """获取指定数量的颜色"""
-        if n_colors <= len(self.COLOR_PALETTE):
-            return self.COLOR_PALETTE[:n_colors]
+        if n_colors <= len(self.color_palette):
+            return self.color_palette[:n_colors]
         else:
             # 如果需要的颜色超过预定义的数量，循环使用
             colors = []
             for i in range(n_colors):
-                colors.append(self.COLOR_PALETTE[i % len(self.COLOR_PALETTE)])
+                colors.append(self.color_palette[i % len(self.color_palette)])
             return colors
 
     def donut_chart(self, data: Union[Dict, pd.Series],
