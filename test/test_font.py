@@ -9,6 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.plot import PlotGenerator
 from src.data import generate_customer_data
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def test_chinese_font():
@@ -99,7 +100,7 @@ def test_chinese_font():
     print("- output/chinese_font_test_stacked.png")
     
     # 显示图表
-    plotter.show_figure()
+    plt.show()
 
 
 if __name__ == "__main__":

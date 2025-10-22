@@ -4,6 +4,7 @@
 """
 
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import matplotlib.font_manager as fm
 import numpy as np
 import pandas as pd
@@ -16,8 +17,9 @@ import platform
 # import matplotlib
 # matplotlib.use("QtAgg")
 
-DEFAULT_STYLE = 'seaborn-v0_8'
+DEFAULT_STYLE = 'default'
 plt.style.use(DEFAULT_STYLE)
+
 
 class PlotGenerator:
     """绘图生成器类"""
@@ -103,6 +105,9 @@ class PlotGenerator:
         if figsize is None:
             figsize = self.figsize
         self.current_fig, self.current_ax = plt.subplots(figsize=figsize)
+        # 统一白底
+        self.current_fig.patch.set_facecolor('white')
+        self.current_ax.set_facecolor('white')
         return self.current_fig, self.current_ax
 
     def _get_colors(self, n_colors: int) -> List[str]:
@@ -209,17 +214,23 @@ class PlotGenerator:
         if colors is None:
             colors = self._get_colors(len(y_cols))
         if line_styles is None:
-            line_styles = ['-', '--', '-.', ':'][:len(y_cols)]
+            # 大量系列时统一使用实线，减少渲染负担
+            if len(y_cols) > 20:
+                line_styles = ['-'] * len(y_cols)
+            else:
+                line_styles = ['-', '--', '-.', ':'] * ((len(y_cols) // 4) + 1)
+                line_styles = line_styles[:len(y_cols)]
 
         # 绘制折线
+        use_markers = len(y_cols) <= 20
         for i, y_col in enumerate(y_cols):
             ax.plot(
                 df[x_col], df[y_col],
                 color=colors[i],
                 linestyle=line_styles[i],
-                linewidth=2.5,
-                marker='o',
-                markersize=6,
+                linewidth=1.5 if len(y_cols) > 20 else 2.5,
+                marker='o' if use_markers else None,
+                markersize=4 if use_markers else 0,
                 label=y_col
             )
 
@@ -228,11 +239,19 @@ class PlotGenerator:
         ax.set_xlabel(x_col, fontsize=12)
         ax.set_ylabel('数值', fontsize=12)
 
-        # 添加图例
-        ax.legend(loc='best', frameon=True, fancybox=True, shadow=True)
+        # 添加图例（简洁样式；系列很多时仅抽样展示）
+        if len(y_cols) <= 10:
+            ax.legend(loc='best', frameon=False)
+        else:
+            # 抽样展示最多 10 条图例项，均匀抽样
+            max_items = 10
+            idx = np.linspace(0, len(y_cols) - 1, max_items, dtype=int)
+            handles = [Line2D([0], [0], color=colors[i], lw=2) for i in idx]
+            labels = [y_cols[i] for i in idx]
+            ax.legend(handles, labels, loc='best', frameon=False, ncol=2)
 
-        # 添加网格
-        ax.grid(True, alpha=0.3, linestyle='--')
+        # 不显示网格
+        ax.grid(False)
 
         return fig
 
@@ -290,12 +309,15 @@ class PlotGenerator:
         elif chart_type == 'stacked':
             bottom = np.zeros(len(df))
             for i, y_col in enumerate(y_cols):
+                values = np.asarray(df[y_col].values, dtype=float)
+                # 将缺失或非数值数据转换为 0
+                values = np.nan_to_num(values, nan=0.0, posinf=0.0, neginf=0.0)
                 ax.bar(
-                    x_pos, df[y_col], width,
+                    x_pos, values, width,
                     bottom=bottom, label=y_col,
                     color=colors[i], alpha=0.8
                 )
-                bottom += df[y_col]
+                bottom = bottom + values
 
         # 设置标题和标签
         ax.set_title(title, fontsize=16, fontweight='bold', pad=20)
@@ -304,11 +326,18 @@ class PlotGenerator:
         ax.set_xticks(x_pos)
         ax.set_xticklabels(df[x_col], rotation=45, ha='right')
 
-        # 添加图例
-        ax.legend(loc='best', frameon=True, fancybox=True, shadow=True)
+        # 添加图例（简洁样式；系列很多时仅抽样展示）
+        if len(y_cols) <= 10:
+            ax.legend(loc='best', frameon=False)
+        else:
+            max_items = 10
+            idx = np.linspace(0, len(y_cols) - 1, max_items, dtype=int)
+            handles = [Line2D([0], [0], color=colors[i], lw=2) for i in idx]
+            labels = [y_cols[i] for i in idx]
+            ax.legend(handles, labels, loc='best', frameon=False, ncol=2)
 
-        # 添加网格
-        ax.grid(True, alpha=0.3, linestyle='--', axis='y')
+        # 不显示网格
+        ax.grid(False)
 
         return fig
 
@@ -457,7 +486,7 @@ class PlotGenerator:
                     ax.legend()
 
             ax.set_title(chart_title, fontsize=12, fontweight='bold')
-            ax.grid(True, alpha=0.3)
+            ax.grid(False)
 
         # 隐藏多余的子图
         for i in range(n_charts, len(axes)):
@@ -467,10 +496,6 @@ class PlotGenerator:
         plt.tight_layout()
 
         return fig
-    
-    def show_figure(self):
-        """显示图表"""
-        self.current_fig.show()
 
 
 def demo():

@@ -77,17 +77,20 @@ def test_plot_functionality():
     
     print("7. 生成堆叠柱状图（月度销售构成）...")
     try:
-        # 按月份汇总销售数据
-        monthly_sales = sales_data.groupby('month').agg({
-            'sales': 'sum',
-            'revenue': 'sum',
-            'price': 'mean'
-        }).reset_index()
-        monthly_sales['month'] = monthly_sales['month'].dt.strftime('%Y-%m')
-        
+        # 按月份与品类汇总销售数据（各品类销量相加等于当月总销量，更适合堆叠）
+        monthly_sales_cat = (
+            sales_data.groupby(['month', 'category'])['sales']
+            .sum()
+            .unstack(fill_value=0)
+            .reset_index()
+        )
+        monthly_sales_cat['month'] = monthly_sales_cat['month'].dt.strftime('%Y-%m')
+
+        y_cols = [col for col in monthly_sales_cat.columns if col != 'month']
+
         fig4 = plotter.bar_chart(
-            monthly_sales, 'month', ['sales', 'revenue'],
-            "月度销售构成", chart_type='stacked'
+            monthly_sales_cat, 'month', y_cols,
+            "月度销售构成（按品类）", chart_type='stacked'
         )
         plotter.save_figure(fig4, "monthly_sales_composition", "png")
         print("   ✓ 堆叠柱状图已保存到 output/monthly_sales_composition.png")
@@ -101,9 +104,18 @@ def test_plot_functionality():
     print("- output/product_sales_comparison.png")
     print("- output/monthly_sales_composition.png")
     
-    # 显示所有图表
-    print("\n正在显示图表...")
-    plotter.show_figure()
+    # 附加：生成 100 系列 × 100 点的折线图样例（仅保存不展示）
+    print("\n附加：生成 100 系列 × 100 点的折线图样例（仅保存不展示）...")
+    import numpy as np
+    x = pd.date_range('2024-01-01', periods=100, freq='D')
+    big_df = pd.DataFrame({'date': x})
+    rng = np.random.default_rng(42)
+    for i in range(100):
+        big_df[f's{i:03d}'] = rng.normal(0, 1, size=100).cumsum()
+    fig_big = plotter.line_chart(big_df, 'date', [f's{i:03d}' for i in range(100)],
+                                 "100 系列 × 100 点 折线图")
+    plotter.save_figure(fig_big, "line_100_series_100_points", "png")
+    print("   ✓ 已保存到 output/line_100_series_100_points.png")
 
 
 def show_individual_charts():
@@ -152,17 +164,20 @@ def show_individual_charts():
     plt.figure(fig3.number)
     plt.show()
     
-    # 4. 堆叠柱状图 - 月度销售构成
+    # 4. 堆叠柱状图 - 月度销售构成（按品类）
     print("4. 展示堆叠柱状图（月度销售构成）...")
-    monthly_sales = sales_data.groupby('month').agg({
-        'sales': 'sum',
-        'revenue': 'sum'
-    }).reset_index()
-    monthly_sales['month'] = monthly_sales['month'].dt.strftime('%Y-%m')
-    
+    monthly_sales_cat = (
+        sales_data.groupby(['month', 'category'])['sales']
+        .sum()
+        .unstack(fill_value=0)
+        .reset_index()
+    )
+    monthly_sales_cat['month'] = monthly_sales_cat['month'].dt.strftime('%Y-%m')
+    y_cols = [col for col in monthly_sales_cat.columns if col != 'month']
+
     fig4 = plotter.bar_chart(
-        monthly_sales, 'month', ['sales', 'revenue'],
-        "月度销售构成", chart_type='stacked'
+        monthly_sales_cat, 'month', y_cols,
+        "月度销售构成（按品类）", chart_type='stacked'
     )
     plt.figure(fig4.number)
     plt.show()
