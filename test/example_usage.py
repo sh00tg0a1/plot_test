@@ -2,8 +2,9 @@
 绘图模块使用示例
 """
 
-from plot import PlotGenerator
 import pandas as pd
+
+from plot import PlotGenerator
 
 
 def main():

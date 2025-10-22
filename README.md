@@ -191,7 +191,7 @@ uv shell
 
 - **pytest**: 测试框架
 - **black**: 代码格式化
-- **flake8**: 代码检查
+- **ruff**: 快速代码检查和自动修复
 
 ## 使用方法
 
@@ -307,7 +307,8 @@ uv run python test_data_generation.py
 3. 运行测试：`uv run python test/test_data_generation.py`
 4. 生成数据：`uv run python test/test_plot.py`
 5. 格式化代码：`uv run black .`
-6. 检查代码：`uv run flake8`
+6. 检查代码：`uv run ruff check .`
+7. 自动修复：`uv run ruff check --fix .`
 
 ## 贡献
 

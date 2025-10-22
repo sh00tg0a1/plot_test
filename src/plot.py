@@ -3,15 +3,16 @@
 支持环形图、折线图、柱状图，以及图片转 base64 功能
 """
 
-import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-import matplotlib.font_manager as fm
-import numpy as np
-import pandas as pd
 import base64
 import io
-from typing import List, Dict, Optional, Union
 import platform
+from typing import Dict, List, Optional, Union
+
+import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib.lines import Line2D
 
 # import platform  # 暂时未使用
 # import matplotlib

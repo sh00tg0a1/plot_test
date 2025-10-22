@@ -2,16 +2,18 @@
 Ubuntu 系统中文字体测试脚本
 """
 
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
-import sys
 import os
+import sys
+
+import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from src.plot import PlotGenerator
-from src.data import generate_customer_data
 import pandas as pd
+
+from src.data import generate_customer_data
+from src.plot import PlotGenerator
 
 
 def check_ubuntu_fonts():

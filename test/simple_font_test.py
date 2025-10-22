@@ -2,13 +2,13 @@
 简单的中文字体测试
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 
 
 def test_simple_chinese():

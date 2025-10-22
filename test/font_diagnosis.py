@@ -3,15 +3,16 @@
 用于诊断和解决中文字体显示问题
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
 import platform
 import subprocess
+
+import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 
 
 def check_system_info():

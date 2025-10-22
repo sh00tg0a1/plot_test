@@ -2,15 +2,16 @@
 测试中文字体显示
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from src.plot import PlotGenerator
-from src.data import generate_customer_data
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
+
+from src.data import generate_customer_data
+from src.plot import PlotGenerator
 
 
 def test_chinese_font():

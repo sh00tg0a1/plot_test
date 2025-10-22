@@ -191,7 +191,7 @@ uv shell
 
 - **pytest**: Testing framework
 - **black**: Code formatting
-- **flake8**: Code linting
+- **ruff**: Fast code linting and auto-fixing
 
 ## Usage
 
@@ -317,7 +317,8 @@ uv run python test_data_generation.py
 3. Run tests: `uv run python test/test_data_generation.py`
 4. Generate data: `uv run python test/test_plot.py`
 5. Format code: `uv run black .`
-6. Lint code: `uv run flake8`
+6. Lint code: `uv run ruff check .`
+7. Auto-fix: `uv run ruff check --fix .`
 
 ## Contributing
 

@@ -2,19 +2,20 @@
 测试绘图功能
 """
 
-import sys
 import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from src.plot import PlotGenerator
-from src.data import (
-    generate_time_series_data,
-    generate_sales_data,
-    generate_customer_data,
-)
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
+
+from src.data import (
+    generate_customer_data,
+    generate_sales_data,
+    generate_time_series_data,
+)
+from src.plot import PlotGenerator
 
 
 def test_plot_functionality():

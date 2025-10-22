@@ -2,10 +2,11 @@
 测试新的配色方案
 """
 
-from plot import PlotGenerator
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from plot import PlotGenerator
 
 
 def test_new_color_palette():
