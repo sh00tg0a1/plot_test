@@ -63,7 +63,12 @@ plot_test/
 `plot.py` 模块提供以下绘图功能：
 
 1. **环形图** (`donut_chart`)
-   - 支持数据字典和 pandas Series
+   - 支持数据字典、pandas Series 和 DataFrame
+   - **字段指定**：DataFrame 数据可指定 `label_col` 和 `value_col`
+   - **智能显示优化**：根据扇形角度自动调整标签和百分比显示
+     - 扇形角度 ≥ 15度：显示标签和百分比
+     - 扇形角度 5-15度：只显示百分比
+     - 扇形角度 < 5度：不显示标签和百分比，使用图例
    - 自动颜色分配
    - 百分比显示
    - 简洁白底设计
@@ -71,16 +76,27 @@ plot_test/
 2. **折线图** (`line_chart`)
    - 支持多条线对比
    - 自定义线型和颜色
+   - **数值标签显示**：`show_values=True` 可在数据点上显示具体数值
+   - **智能数值格式化**：自动使用K/M后缀，避免科学计数法
+   - **智能轴标签旋转**：根据标签长度自动调整旋转角度
    - **大规模数据优化**：支持 100+ 系列 × 100+ 点
    - 智能图例：系列数量超过 10 时，自动抽样显示
    - 自适应渲染：大量系列时自动简化标记和线宽
    - 简洁无网格设计
 
 3. **柱状图** (`bar_chart`)
-   - **分组柱状图**：并排显示多个系列
-   - **堆叠柱状图**：叠加显示多个系列（自动数据对齐）
+   - **智能类型判断**：根据参数自动选择图表类型
+   - **分组柱状图**：指定 `group_col` 参数
+   - **堆叠柱状图**：指定 `stack_col` 参数  
+   - **分组+堆叠组合**：同时指定 `group_col` 和 `stack_col`
+   - **二维表数据支持**：直接处理长格式数据，无需透视表转换
+   - **数值标签显示**：`show_values=True` 可在柱子上显示具体数值
+   - **智能数值格式化**：自动使用K/M后缀，避免科学计数法
+   - **智能轴标签旋转**：根据标签长度自动调整旋转角度
+   - **智能数值标签隐藏**：数据点过多时自动隐藏数值标签
+   - **智能宽度调整**：根据系列数量自动调整柱子宽度，确保美观
    - 支持自定义颜色
-   - 智能图例显示
+   - 智能图例显示（最多10个）
    - 简洁白底设计
 
 4. **图片导出功能**
@@ -258,21 +274,36 @@ data = pd.DataFrame({
 })
 
 # 1. 环形图
+# 方式1：使用字典
 category_data = {'电子产品': 40, '服装': 30, '食品': 20, '其他': 10}
 fig1 = plotter.donut_chart(category_data, "产品销售占比")
+
+# 方式2：使用 DataFrame 指定字段
+df_data = pd.DataFrame({
+    '类别': ['电子产品', '服装', '食品', '其他'],
+    '销售额': [40, 30, 20, 10]
+})
+fig1_df = plotter.donut_chart(df_data, "产品销售占比", 
+                             label_col='类别', value_col='销售额')
+
 plotter.save_figure(fig1, "my_donut")  # 保存图片
 base64_1 = plotter.figure_to_base64(fig1)  # 转换为 base64
 
-# 2. 折线图
-fig2 = plotter.line_chart(data, '月份', ['销售额', '利润'], "销售趋势")
+# 2. 折线图（显示数值）
+fig2 = plotter.line_chart(data, '月份', ['销售额', '利润'], "销售趋势", show_values=True)
 
-# 3. 分组柱状图
-fig3 = plotter.bar_chart(data, '月份', ['销售额', '利润'], 
-                        "月度对比", chart_type='grouped')
+# 3. 分组柱状图（使用二维表数据，显示数值）
+data_long = pd.DataFrame({
+    '月份': ['1月', '1月', '2月', '2月', '3月', '3月', '4月', '4月'],
+    '指标': ['销售额', '利润', '销售额', '利润', '销售额', '利润', '销售额', '利润'],
+    '数值': [100, 20, 150, 30, 200, 40, 180, 35]
+})
+fig3 = plotter.bar_chart(data_long, x_col='月份', y_col='数值', 
+                        group_col='指标', title="月度对比", show_values=True)
 
-# 4. 堆叠柱状图
-fig4 = plotter.bar_chart(data, '月份', ['销售额', '利润'], 
-                        "财务数据", chart_type='stacked')
+# 4. 堆叠柱状图（使用二维表数据，显示数值）
+fig4 = plotter.bar_chart(data_long, x_col='月份', y_col='数值', 
+                        stack_col='指标', title="财务数据", show_values=True)
 
 # 5. 保存图片
 plotter.save_figure(fig1, "my_donut_chart", "png")

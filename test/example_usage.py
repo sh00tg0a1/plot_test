@@ -4,7 +4,8 @@
 
 import pandas as pd
 
-from plot import PlotGenerator
+from src.data import generate_sales_data
+from src.plot import PlotGenerator
 
 
 def main():
@@ -17,18 +18,23 @@ def main():
     # 1. 创建示例数据
     print("1. 创建示例数据...")
 
-    # 销售数据
-    sales_data = pd.DataFrame(
-        {
-            "月份": ["1月", "2月", "3月", "4月", "5月", "6月"],
-            "销售额": [120, 150, 180, 200, 160, 190],
-            "利润": [30, 40, 50, 60, 45, 55],
-            "成本": [90, 110, 130, 140, 115, 135],
-        }
-    )
+    # 使用 data.py 生成销售数据
+    sales_data_raw = generate_sales_data(products=10, months=6)
 
-    # 产品分类数据
-    category_data = {"电子产品": 40, "服装": 25, "食品": 20, "图书": 15}
+    # 转换为示例格式
+    monthly_summary = (
+        sales_data_raw.groupby(sales_data_raw["month"].dt.strftime("%m月"))
+        .agg({"sales": "sum", "revenue": "sum"})
+        .reset_index()
+    )
+    monthly_summary.columns = ["月份", "销售额", "利润"]
+    monthly_summary["成本"] = monthly_summary["销售额"] - monthly_summary["利润"]
+
+    sales_data = monthly_summary
+
+    # 产品分类数据（从销售数据中提取）
+    category_counts = sales_data_raw["category"].value_counts()
+    category_data = category_counts.to_dict()
 
     print("数据创建完成！\n")
 
@@ -42,7 +48,9 @@ def main():
 
     # 3. 生成折线图
     print("\n3. 生成折线图...")
-    fig2 = plotter.line_chart(sales_data, "月份", ["销售额", "利润"], "销售趋势")
+    fig2 = plotter.line_chart(
+        sales_data, "月份", ["销售额", "利润"], "销售趋势", show_values=True
+    )
     filepath2 = plotter.save_figure(fig2, "销售趋势", "png")
     base64_2 = plotter.figure_to_base64(fig2)
     print(f"   ✓ 折线图已保存到: {filepath2}")
@@ -50,8 +58,47 @@ def main():
 
     # 4. 生成分组柱状图
     print("\n4. 生成分组柱状图...")
+    # 创建二维表数据用于演示新的API
+    sales_data_long = pd.DataFrame(
+        {
+            "月份": [
+                "1月",
+                "1月",
+                "2月",
+                "2月",
+                "3月",
+                "3月",
+                "4月",
+                "4月",
+                "5月",
+                "5月",
+                "6月",
+                "6月",
+            ],
+            "指标": [
+                "销售额",
+                "利润",
+                "销售额",
+                "利润",
+                "销售额",
+                "利润",
+                "销售额",
+                "利润",
+                "销售额",
+                "利润",
+                "销售额",
+                "利润",
+            ],
+            "数值": [120, 30, 150, 40, 180, 50, 200, 60, 160, 45, 190, 55],
+        }
+    )
     fig3 = plotter.bar_chart(
-        sales_data, "月份", ["销售额", "利润"], "月度销售对比", chart_type="grouped"
+        sales_data_long,
+        x_col="月份",
+        y_col="数值",
+        group_col="指标",
+        title="月度销售对比",
+        show_values=True,
     )
     filepath3 = plotter.save_figure(fig3, "月度销售对比", "png")
     base64_3 = plotter.figure_to_base64(fig3)
@@ -60,52 +107,82 @@ def main():
 
     # 5. 生成堆叠柱状图
     print("\n5. 生成堆叠柱状图...")
+    # 创建二维表数据用于演示堆叠图
+    finance_data_long = pd.DataFrame(
+        {
+            "月份": [
+                "1月",
+                "1月",
+                "1月",
+                "2月",
+                "2月",
+                "2月",
+                "3月",
+                "3月",
+                "3月",
+                "4月",
+                "4月",
+                "4月",
+                "5月",
+                "5月",
+                "5月",
+                "6月",
+                "6月",
+                "6月",
+            ],
+            "类型": [
+                "销售额",
+                "利润",
+                "成本",
+                "销售额",
+                "利润",
+                "成本",
+                "销售额",
+                "利润",
+                "成本",
+                "销售额",
+                "利润",
+                "成本",
+                "销售额",
+                "利润",
+                "成本",
+                "销售额",
+                "利润",
+                "成本",
+            ],
+            "数值": [
+                120,
+                30,
+                90,
+                150,
+                40,
+                110,
+                180,
+                50,
+                130,
+                200,
+                60,
+                140,
+                160,
+                45,
+                115,
+                190,
+                55,
+                135,
+            ],
+        }
+    )
     fig4 = plotter.bar_chart(
-        sales_data,
-        "月份",
-        ["销售额", "利润", "成本"],
-        "月度财务数据",
-        chart_type="stacked",
+        finance_data_long,
+        x_col="月份",
+        y_col="数值",
+        stack_col="类型",
+        title="月度财务数据",
     )
     filepath4 = plotter.save_figure(fig4, "月度财务数据", "png")
     base64_4 = plotter.figure_to_base64(fig4)
     print(f"   ✓ 堆叠柱状图已保存到: {filepath4}")
     print(f"   ✓ Base64 编码长度: {len(base64_4)} 字符")
-
-    # 6. 生成仪表板
-    print("\n6. 生成综合仪表板...")
-    dashboard_config = [
-        {"type": "donut", "data": category_data, "title": "产品分类"},
-        {
-            "type": "line",
-            "data": sales_data,
-            "x_col": "月份",
-            "y_cols": ["销售额"],
-            "title": "销售趋势",
-        },
-        {
-            "type": "bar",
-            "data": sales_data,
-            "x_col": "月份",
-            "y_cols": ["销售额", "利润"],
-            "subtype": "grouped",
-            "title": "月度对比",
-        },
-        {
-            "type": "bar",
-            "data": sales_data,
-            "x_col": "月份",
-            "y_cols": ["销售额", "利润", "成本"],
-            "subtype": "stacked",
-            "title": "财务数据",
-        },
-    ]
-
-    fig5 = plotter.create_dashboard(dashboard_config, "综合数据仪表板")
-    filepath5 = plotter.save_figure(fig5, "综合数据仪表板", "png")
-    base64_5 = plotter.figure_to_base64(fig5)
-    print(f"   ✓ 仪表板已保存到: {filepath5}")
-    print(f"   ✓ Base64 编码长度: {len(base64_5)} 字符")
 
     # 7. 演示自定义颜色
     print("\n7. 演示自定义颜色...")
@@ -120,7 +197,6 @@ def main():
     print("- output/销售趋势.png")
     print("- output/月度销售对比.png")
     print("- output/月度财务数据.png")
-    print("- output/综合数据仪表板.png")
     print("- output/自定义颜色环形图.png")
     print("\nBase64 编码可用于:")
     print("- 网页显示")

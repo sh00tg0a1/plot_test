@@ -115,7 +115,7 @@ def test_chinese_display():
             "产品名称",
             ["销量", "收入"],
             "产品销售数据分析",
-            chart_type="grouped",
+            group_col="指标",
         )
         plotter.save_figure(fig3, "ubuntu_chinese_test_bar", "png")
         print("   ✓ 柱状图已保存到 output/ubuntu_chinese_test_bar.png")

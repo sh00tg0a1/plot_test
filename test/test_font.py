@@ -76,7 +76,7 @@ def test_chinese_font():
             "产品名称",
             ["销量", "收入"],
             "产品销售数据分析",
-            chart_type="grouped",
+            group_col="指标",
         )
         plotter.save_figure(fig3, "chinese_font_test_bar", "png")
         print("   ✓ 柱状图已保存到 output/chinese_font_test_bar.png")
@@ -100,7 +100,7 @@ def test_chinese_font():
             "月份",
             ["线上销售", "线下销售", "批发销售"],
             "月度销售渠道分析",
-            chart_type="stacked",
+            stack_col="指标",
         )
         plotter.save_figure(fig4, "chinese_font_test_stacked", "png")
         print("   ✓ 堆叠柱状图已保存到 output/chinese_font_test_stacked.png")

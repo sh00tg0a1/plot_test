@@ -3,32 +3,34 @@
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 
-from plot import PlotGenerator
+from src.data import generate_sales_data
+from src.plot import PlotGenerator
 
 
 def test_new_color_palette():
     """测试新的配色方案"""
     print("=== 测试新的配色方案 ===\n")
 
-    # 创建测试数据
-    np.random.seed(42)
+    # 使用 data.py 生成测试数据
+    print("1. 生成测试数据...")
+    sales_data_raw = generate_sales_data(products=15, months=8)
 
-    # 创建更多分类数据来展示所有颜色
-    category_data = {"电子产品": 30, "服装": 25, "食品": 20, "图书": 15, "家居": 10}
+    # 创建分类数据（从销售数据中提取）
+    category_counts = sales_data_raw["category"].value_counts()
+    category_data = category_counts.to_dict()
 
-    # 时间序列数据
-    dates = pd.date_range("2024-01-01", periods=8, freq="M")
-    sales_data = pd.DataFrame(
-        {
-            "月份": [d.strftime("%Y-%m") for d in dates],
-            "销售额": [120, 150, 180, 200, 160, 190, 220, 250],
-            "利润": [30, 40, 50, 60, 45, 55, 65, 75],
-            "成本": [90, 110, 130, 140, 115, 135, 155, 175],
-        }
+    # 创建月度汇总数据
+    monthly_summary = (
+        sales_data_raw.groupby(sales_data_raw["month"].dt.strftime("%Y-%m"))
+        .agg({"sales": "sum", "revenue": "sum"})
+        .reset_index()
     )
+    monthly_summary.columns = ["月份", "销售额", "利润"]
+    monthly_summary["成本"] = monthly_summary["销售额"] - monthly_summary["利润"]
+
+    sales_data = monthly_summary
+    print(f"   ✓ 数据生成完成，形状: {sales_data.shape}")
 
     # 创建绘图器
     plotter = PlotGenerator()
@@ -51,58 +53,33 @@ def test_new_color_palette():
     print("   ✓ 折线图已保存到 output/new_color_line.png")
 
     print("\n4. 生成柱状图（展示配色）...")
+    # 转换为二维表数据格式
+    sales_data_long = sales_data.melt(
+        id_vars=["月份"],
+        value_vars=["销售额", "利润", "成本"],
+        var_name="指标",
+        value_name="数值",
+    )
     fig3 = plotter.bar_chart(
-        sales_data,
-        "月份",
-        ["销售额", "利润", "成本"],
-        "月度财务数据（新配色）",
-        chart_type="grouped",
+        sales_data_long,
+        x_col="月份",
+        y_col="数值",
+        group_col="指标",
+        title="月度财务数据（新配色）",
     )
     plotter.save_figure(fig3, "new_color_bar", "png")
     print("   ✓ 柱状图已保存到 output/new_color_bar.png")
 
     print("\n5. 生成堆叠柱状图（展示配色）...")
     fig4 = plotter.bar_chart(
-        sales_data,
-        "月份",
-        ["销售额", "利润", "成本"],
-        "月度财务数据（新配色）",
-        chart_type="stacked",
+        sales_data_long,
+        x_col="月份",
+        y_col="数值",
+        stack_col="指标",
+        title="月度财务数据（新配色）",
     )
     plotter.save_figure(fig4, "new_color_stacked", "png")
     print("   ✓ 堆叠柱状图已保存到 output/new_color_stacked.png")
-
-    print("\n6. 生成综合仪表板（展示配色）...")
-    dashboard_config = [
-        {"type": "donut", "data": category_data, "title": "产品分类"},
-        {
-            "type": "line",
-            "data": sales_data,
-            "x_col": "月份",
-            "y_cols": ["销售额"],
-            "title": "销售趋势",
-        },
-        {
-            "type": "bar",
-            "data": sales_data,
-            "x_col": "月份",
-            "y_cols": ["销售额", "利润"],
-            "subtype": "grouped",
-            "title": "月度对比",
-        },
-        {
-            "type": "bar",
-            "data": sales_data,
-            "x_col": "月份",
-            "y_cols": ["销售额", "利润", "成本"],
-            "subtype": "stacked",
-            "title": "财务数据",
-        },
-    ]
-
-    fig5 = plotter.create_dashboard(dashboard_config, "新配色综合仪表板")
-    plotter.save_figure(fig5, "new_color_dashboard", "png")
-    print("   ✓ 仪表板已保存到 output/new_color_dashboard.png")
 
     print("\n=== 新配色方案测试完成！ ===")
     print("生成的文件:")
@@ -110,7 +87,6 @@ def test_new_color_palette():
     print("- output/new_color_line.png")
     print("- output/new_color_bar.png")
     print("- output/new_color_stacked.png")
-    print("- output/new_color_dashboard.png")
 
     # 显示图表
     print("\n正在显示图表...")

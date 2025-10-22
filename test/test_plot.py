@@ -71,12 +71,20 @@ def test_plot_functionality():
             .reset_index()
         )
 
+        # 转换为二维表数据格式
+        product_sales_long = product_sales.melt(
+            id_vars=["product"],
+            value_vars=["sales", "revenue"],
+            var_name="指标",
+            value_name="数值",
+        )
+
         fig3 = plotter.bar_chart(
-            product_sales,
-            "product",
-            ["sales", "revenue"],
-            "产品销售对比",
-            chart_type="grouped",
+            product_sales_long,
+            x_col="product",
+            y_col="数值",
+            group_col="指标",
+            title="产品销售对比",
         )
         plotter.save_figure(fig3, "product_sales_comparison", "png")
         print("   ✓ 分组柱状图已保存到 output/product_sales_comparison.png")
@@ -96,12 +104,17 @@ def test_plot_functionality():
 
         y_cols = [col for col in monthly_sales_cat.columns if col != "month"]
 
+        # 转换为二维表数据格式
+        monthly_sales_long = monthly_sales_cat.melt(
+            id_vars=["month"], value_vars=y_cols, var_name="品类", value_name="销量"
+        )
+
         fig4 = plotter.bar_chart(
-            monthly_sales_cat,
-            "month",
-            y_cols,
-            "月度销售构成（按品类）",
-            chart_type="stacked",
+            monthly_sales_long,
+            x_col="month",
+            y_col="销量",
+            stack_col="品类",
+            title="月度销售构成（按品类）",
         )
         plotter.save_figure(fig4, "monthly_sales_composition", "png")
         print("   ✓ 堆叠柱状图已保存到 output/monthly_sales_composition.png")
@@ -171,12 +184,20 @@ def show_individual_charts():
         .reset_index()
     )
 
+    # 转换为二维表数据格式
+    product_sales_long = product_sales.melt(
+        id_vars=["product"],
+        value_vars=["sales", "revenue"],
+        var_name="指标",
+        value_name="数值",
+    )
+
     fig3 = plotter.bar_chart(
-        product_sales,
-        "product",
-        ["sales", "revenue"],
-        "产品销售对比",
-        chart_type="grouped",
+        product_sales_long,
+        x_col="product",
+        y_col="数值",
+        group_col="指标",
+        title="产品销售对比",
     )
     plt.figure(fig3.number)
     plt.show()
@@ -192,12 +213,17 @@ def show_individual_charts():
     monthly_sales_cat["month"] = monthly_sales_cat["month"].dt.strftime("%Y-%m")
     y_cols = [col for col in monthly_sales_cat.columns if col != "month"]
 
+    # 转换为二维表数据格式
+    monthly_sales_long = monthly_sales_cat.melt(
+        id_vars=["month"], value_vars=y_cols, var_name="品类", value_name="销量"
+    )
+
     fig4 = plotter.bar_chart(
-        monthly_sales_cat,
-        "month",
-        y_cols,
-        "月度销售构成（按品类）",
-        chart_type="stacked",
+        monthly_sales_long,
+        x_col="month",
+        y_col="销量",
+        stack_col="品类",
+        title="月度销售构成（按品类）",
     )
     plt.figure(fig4.number)
     plt.show()
