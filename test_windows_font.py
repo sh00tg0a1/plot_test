@@ -4,7 +4,6 @@ Windows 中文字体测试
 
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
-import platform
 import os
 
 

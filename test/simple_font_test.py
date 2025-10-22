@@ -22,13 +22,13 @@ def test_simple_chinese():
             import shutil
             shutil.rmtree(cache_dir)
             print("✓ 已清除 matplotlib 缓存")
-    except:
+    except Exception:
         pass
     
     try:
         fm._rebuild()
         print("✓ 已重建字体管理器")
-    except:
+    except Exception:
         pass
     
     # 获取可用字体
