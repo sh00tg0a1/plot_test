@@ -2,14 +2,8 @@
 Ubuntu 系统中文字体测试脚本
 """
 
-import os
-import sys
-
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 import pandas as pd
 
 from src.data import generate_customer_data

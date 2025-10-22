@@ -3,9 +3,6 @@
 """
 
 import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -51,9 +48,7 @@ def test_simple_chinese():
         "yahei",
         "simhei",
     ]
-    chinese_fonts = [
-        f for f in available_fonts if any(kw in f.lower() for kw in chinese_keywords)
-    ]
+    chinese_fonts = [f for f in available_fonts if any(kw in f.lower() for kw in chinese_keywords)]
 
     print(f"找到 {len(chinese_fonts)} 个可能的中文字体:")
     for font in chinese_fonts[:10]:  # 只显示前10个

@@ -2,12 +2,8 @@
 测试分组+堆叠组合柱状图
 """
 
-import os
-import sys
-
 import matplotlib.pyplot as plt
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.data import generate_sales_data
 from src.plot import PlotGenerator
 
@@ -29,9 +25,7 @@ def test_grouped_stacked_chart():
         value_name="数值",
     )
     # 添加渠道信息
-    data["渠道"] = data["product"].apply(
-        lambda x: "线上" if int(x.split("_")[1]) % 2 == 0 else "线下"
-    )
+    data["渠道"] = data["product"].apply(lambda x: "线上" if int(x.split("_")[1]) % 2 == 0 else "线下")
     data["产品"] = data["product"].apply(lambda x: f"产品{x.split('_')[1]}")
     data["季度"] = data["month"].dt.to_period("Q").astype(str)
 
@@ -85,12 +79,8 @@ def test_grouped_stacked_chart():
     print("4. 三组堆叠示例...")
     # 使用销售数据创建团队业绩数据
     team_data = sales_data.copy()
-    team_data["团队"] = team_data["product"].apply(
-        lambda x: f"团队{chr(65 + int(x.split('_')[1]) % 3)}"
-    )
-    team_data["类型"] = team_data["sales"].apply(
-        lambda x: "新增" if x > team_data["sales"].median() else "续费"
-    )
+    team_data["团队"] = team_data["product"].apply(lambda x: f"团队{chr(65 + int(x.split('_')[1]) % 3)}")
+    team_data["类型"] = team_data["sales"].apply(lambda x: "新增" if x > team_data["sales"].median() else "续费")
     team_data["月份"] = team_data["month"].dt.strftime("%m月")
     team_data["业绩"] = team_data["sales"]
 

@@ -48,9 +48,7 @@ def main():
 
     # 3. 生成折线图
     print("\n3. 生成折线图...")
-    fig2 = plotter.line_chart(
-        sales_data, "月份", ["销售额", "利润"], "销售趋势", show_values=True
-    )
+    fig2 = plotter.line_chart(sales_data, "月份", ["销售额", "利润"], "销售趋势", show_values=True)
     filepath2 = plotter.save_figure(fig2, "销售趋势", "png")
     base64_2 = plotter.figure_to_base64(fig2)
     print(f"   ✓ 折线图已保存到: {filepath2}")

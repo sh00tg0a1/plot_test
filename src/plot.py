@@ -3,6 +3,9 @@
 支持环形图、折线图、柱状图，以及图片转 base64 功能
 """
 
+# flake8: noqa: E501
+# pylint: disable=line-too-long
+
 import base64
 import io
 import platform
@@ -161,9 +164,7 @@ class PlotGenerator:
             values = data.values.tolist()
         elif isinstance(data, pd.DataFrame):
             if label_col is None or value_col is None:
-                raise ValueError(
-                    "当 data 为 DataFrame 时，必须指定 " "label_col 和 value_col"
-                )
+                raise ValueError("当 data 为 DataFrame 时，必须指定 " "label_col 和 value_col")
             labels = data[label_col].tolist()
             values = data[value_col].tolist()
         else:
@@ -230,9 +231,7 @@ class PlotGenerator:
             # 限制图例显示数量，避免图例过长
             max_legend_items = 15
             if n_items <= max_legend_items:
-                ax.legend(
-                    wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1)
-                )
+                ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
             else:
                 # 只显示前15个图例项
                 legend_wedges = wedges[:max_legend_items]
@@ -460,9 +459,7 @@ class PlotGenerator:
 
                 for stack_val in stack_values:
                     # 获取特定分组和堆叠组合的数据
-                    subset = df[
-                        (df[group_col] == group_val) & (df[stack_col] == stack_val)
-                    ]
+                    subset = df[(df[group_col] == group_val) & (df[stack_col] == stack_val)]
                     aggregated = subset.groupby(x_col)[y_col].sum()
                     values = [aggregated.get(x_val, 0) for x_val in x_values]
 
@@ -704,9 +701,7 @@ class PlotGenerator:
 
         return image_base64
 
-    def save_figure(
-        self, fig: plt.Figure, filename: str, format: str = "png", dpi: int = 300
-    ) -> str:
+    def save_figure(self, fig: plt.Figure, filename: str, format: str = "png", dpi: int = 300) -> str:
         """
         保存图片到文件
 

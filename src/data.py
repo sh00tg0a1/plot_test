@@ -95,9 +95,7 @@ def generate_sales_data(products=50, months=12):
                     "sales": sales,
                     "price": round(price, 2),
                     "revenue": round(revenue, 2),
-                    "category": np.random.choice(
-                        ["Electronics", "Clothing", "Books", "Home"]
-                    ),
+                    "category": np.random.choice(["Electronics", "Clothing", "Books", "Home"]),
                     "region": np.random.choice(["North", "South", "East", "West"]),
                 }
             )
@@ -133,12 +131,8 @@ def generate_customer_data(customers=1000):
             "income": np.round(incomes, 2),
             "purchase_count": purchase_counts,
             "gender": np.random.choice(["M", "F"], customers),
-            "city": np.random.choice(
-                ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Hangzhou"], customers
-            ),
-            "registration_date": pd.date_range(
-                "2020-01-01", periods=customers, freq="D"
-            )[:customers],
+            "city": np.random.choice(["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Hangzhou"], customers),
+            "registration_date": pd.date_range("2020-01-01", periods=customers, freq="D")[:customers],
         }
     )
 

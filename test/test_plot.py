@@ -2,11 +2,6 @@
 测试绘图功能
 """
 
-import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -65,11 +60,7 @@ def test_plot_functionality():
     print("6. 生成分组柱状图（产品销售对比）...")
     try:
         # 按产品汇总销售数据
-        product_sales = (
-            sales_data.groupby("product")
-            .agg({"sales": "sum", "revenue": "sum"})
-            .reset_index()
-        )
+        product_sales = sales_data.groupby("product").agg({"sales": "sum", "revenue": "sum"}).reset_index()
 
         # 转换为二维表数据格式
         product_sales_long = product_sales.melt(
@@ -94,12 +85,7 @@ def test_plot_functionality():
     print("7. 生成堆叠柱状图（月度销售构成）...")
     try:
         # 按月份与品类汇总销售数据（各品类销量相加等于当月总销量，更适合堆叠）
-        monthly_sales_cat = (
-            sales_data.groupby(["month", "category"])["sales"]
-            .sum()
-            .unstack(fill_value=0)
-            .reset_index()
-        )
+        monthly_sales_cat = sales_data.groupby(["month", "category"])["sales"].sum().unstack(fill_value=0).reset_index()
         monthly_sales_cat["month"] = monthly_sales_cat["month"].dt.strftime("%Y-%m")
 
         y_cols = [col for col in monthly_sales_cat.columns if col != "month"]
@@ -137,9 +123,7 @@ def test_plot_functionality():
     rng = np.random.default_rng(42)
     for i in range(100):
         big_df[f"s{i:03d}"] = rng.normal(0, 1, size=100).cumsum()
-    fig_big = plotter.line_chart(
-        big_df, "date", [f"s{i:03d}" for i in range(100)], "100 系列 × 100 点 折线图"
-    )
+    fig_big = plotter.line_chart(big_df, "date", [f"s{i:03d}" for i in range(100)], "100 系列 × 100 点 折线图")
     plotter.save_figure(fig_big, "line_100_series_100_points", "png")
     print("   ✓ 已保存到 output/line_100_series_100_points.png")
 
@@ -178,11 +162,7 @@ def show_individual_charts():
 
     # 3. 分组柱状图 - 产品销售对比
     print("3. 展示分组柱状图（产品销售对比）...")
-    product_sales = (
-        sales_data.groupby("product")
-        .agg({"sales": "sum", "revenue": "sum"})
-        .reset_index()
-    )
+    product_sales = sales_data.groupby("product").agg({"sales": "sum", "revenue": "sum"}).reset_index()
 
     # 转换为二维表数据格式
     product_sales_long = product_sales.melt(
@@ -204,12 +184,7 @@ def show_individual_charts():
 
     # 4. 堆叠柱状图 - 月度销售构成（按品类）
     print("4. 展示堆叠柱状图（月度销售构成）...")
-    monthly_sales_cat = (
-        sales_data.groupby(["month", "category"])["sales"]
-        .sum()
-        .unstack(fill_value=0)
-        .reset_index()
-    )
+    monthly_sales_cat = sales_data.groupby(["month", "category"])["sales"].sum().unstack(fill_value=0).reset_index()
     monthly_sales_cat["month"] = monthly_sales_cat["month"].dt.strftime("%Y-%m")
     y_cols = [col for col in monthly_sales_cat.columns if col != "month"]
 

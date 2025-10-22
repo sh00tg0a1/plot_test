@@ -46,9 +46,7 @@ def test_new_color_palette():
     print("   ✓ 环形图已保存到 output/new_color_donut.png")
 
     print("\n3. 生成折线图（展示配色）...")
-    fig2 = plotter.line_chart(
-        sales_data, "月份", ["销售额", "利润", "成本"], "销售趋势（新配色）"
-    )
+    fig2 = plotter.line_chart(sales_data, "月份", ["销售额", "利润", "成本"], "销售趋势（新配色）")
     plotter.save_figure(fig2, "new_color_line", "png")
     print("   ✓ 折线图已保存到 output/new_color_line.png")
 
@@ -80,7 +78,6 @@ def test_new_color_palette():
     )
     plotter.save_figure(fig4, "new_color_stacked", "png")
     print("   ✓ 堆叠柱状图已保存到 output/new_color_stacked.png")
-
     print("\n=== 新配色方案测试完成！ ===")
     print("生成的文件:")
     print("- output/new_color_donut.png")
