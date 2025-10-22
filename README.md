@@ -1,6 +1,6 @@
 # Plot Test 项目
 
-[![CI](https://github.com/your-username/plot_test/workflows/CI/badge.svg)](https://github.com/your-username/plot_test/actions)
+[![CI](https://github.com/sh00tg0a1/plot_test/workflows/CI/badge.svg)](https://github.com/sh00tg0a1/plot_test/actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -328,7 +328,7 @@ uv run python test_data_generation.py
 
 ## 相关链接
 
-- [项目主页](https://github.com/your-username/plot_test)
-- [问题反馈](https://github.com/your-username/plot_test/issues)
-- [贡献指南](CONTRIBUTING.md)
+- [项目主页](https://github.com/sh00tg0a1/plot_test)
+- [问题反馈](https://github.com/sh00tg0a1/plot_test/issues)
 - [Ubuntu 字体设置指南](ubuntu_font_guide.md)
+- [快速修复指南](QUICK_FIX.md)

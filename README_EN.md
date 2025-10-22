@@ -1,6 +1,6 @@
 # Plot Test Project
 
-[![CI](https://github.com/your-username/plot_test/workflows/CI/badge.svg)](https://github.com/your-username/plot_test/actions)
+[![CI](https://github.com/sh00tg0a1/plot_test/workflows/CI/badge.svg)](https://github.com/sh00tg0a1/plot_test/actions)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -338,7 +338,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Related Links
 
-- [Project Homepage](https://github.com/your-username/plot_test)
-- [Issue Tracker](https://github.com/your-username/plot_test/issues)
-- [Contribution Guide](CONTRIBUTING.md)
+- [Project Homepage](https://github.com/sh00tg0a1/plot_test)
+- [Issue Tracker](https://github.com/sh00tg0a1/plot_test/issues)
 - [Ubuntu Font Setup Guide](ubuntu_font_guide.md)
+- [Quick Fix Guide](QUICK_FIX.md)
