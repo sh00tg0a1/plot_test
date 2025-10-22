@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      with:
+        version: "latest"
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Install Chinese fonts (Ubuntu)
+      run: |
+        sudo apt update
+        sudo apt install -y fonts-wqy-microhei fonts-noto-cjk
+        sudo fc-cache -fv
+    
+    - name: Run data generation tests
+      run: uv run python test/test_data_generation.py
+    
+    - name: Run plot tests
+      run: uv run python test/test_plot.py
+    
+    - name: Run font tests
+      run: uv run python test/test_font.py
+    
+    - name: Run Ubuntu font tests
+      run: uv run python test/test_ubuntu_fonts.py
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      with:
+        version: "latest"
+    
+    - name: Install dependencies
+      run: uv sync
+    
+    - name: Run linting
+      run: |
+        uv run flake8 src/ test/
+        uv run black --check src/ test/
+
+
+
