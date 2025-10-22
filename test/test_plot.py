@@ -103,7 +103,7 @@ def test_plot_functionality():
     
     # 显示所有图表
     print("\n正在显示图表...")
-    plt.show()
+    plotter.show_figure()
 
 
 def show_individual_charts():

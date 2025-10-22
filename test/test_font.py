@@ -14,13 +14,13 @@ import pandas as pd
 def test_chinese_font():
     """测试中文字体显示"""
     print("=== 测试中文字体显示 ===\n")
-    
+
     # 生成测试数据
     customer_data = generate_customer_data(customers=50)
-    
+
     # 创建绘图器
     plotter = PlotGenerator()
-    
+
     print("1. 测试环形图中文显示...")
     try:
         # 从客户数据中提取年龄分布
@@ -99,9 +99,7 @@ def test_chinese_font():
     print("- output/chinese_font_test_stacked.png")
     
     # 显示图表
-    import matplotlib.pyplot as plt
-    print("\n正在显示图表...")
-    plt.show()
+    plotter.show_figure()
 
 
 if __name__ == "__main__":

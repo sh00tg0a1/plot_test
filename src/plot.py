@@ -10,8 +10,14 @@ import pandas as pd
 import base64
 import io
 from typing import List, Dict, Optional, Union
-# import platform  # 暂时未使用
+import platform
 
+# import platform  # 暂时未使用
+# import matplotlib
+# matplotlib.use("QtAgg")
+
+DEFAULT_STYLE = 'seaborn-v0_8'
+plt.style.use(DEFAULT_STYLE)
 
 class PlotGenerator:
     """绘图生成器类"""
@@ -22,7 +28,7 @@ class PlotGenerator:
         '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'
     ]
 
-    def __init__(self, style='seaborn-v0_8', figsize=(10, 6)):
+    def __init__(self, figsize=(10, 6), style=DEFAULT_STYLE):
         """
         初始化绘图生成器
 
@@ -33,32 +39,13 @@ class PlotGenerator:
         # 设置中文字体
         self._setup_chinese_font()
         
-        plt.style.use(style)
         self.figsize = figsize
         self.current_fig = None
         self.current_ax = None
 
     def _setup_chinese_font(self):
         """设置中文字体"""
-        import platform
-        import os
-        
-        # 清除 matplotlib 字体缓存
-        try:
-            import matplotlib
-            cache_dir = matplotlib.get_cachedir()
-            if os.path.exists(cache_dir):
-                import shutil
-                shutil.rmtree(cache_dir, ignore_errors=True)
-        except:
-            pass
-        
-        # 重新构建字体管理器
-        try:
-            fm._rebuild()
-        except:
-            pass
-        
+
         # 根据系统选择字体
         system = platform.system().lower()
         
@@ -73,11 +60,10 @@ class PlotGenerator:
                 'AR PL UKai CN'
             ]
         elif system == 'windows':
+            print("正在为 Windows 系统设置字体...")
             chinese_fonts = [
                 'Microsoft YaHei',
                 'SimHei',
-                'KaiTi',
-                'FangSong',
                 'SimSun'
             ]
         elif system == 'darwin':  # macOS
@@ -97,6 +83,7 @@ class PlotGenerator:
         
         # 获取所有可用字体
         available_fonts = [f.name for f in fm.fontManager.ttflist]
+        print(f"系统中共有 {len(available_fonts)} 个字体")
         
         # 尝试设置字体
         font_set = False
@@ -105,36 +92,11 @@ class PlotGenerator:
                 try:
                     plt.rcParams['font.sans-serif'] = [font]
                     plt.rcParams['axes.unicode_minus'] = False
-                    font_set = True
                     print(f"✓ 使用中文字体: {font}")
                     break
                 except Exception as e:
                     print(f"✗ 字体设置失败: {font}, 错误: {e}")
                     continue
-        
-        # 如果仍然没有设置成功，尝试强制设置
-        if not font_set:
-            try:
-                # 尝试使用系统默认字体
-                plt.rcParams['font.family'] = 'sans-serif'
-                plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'Liberation Sans']
-                plt.rcParams['axes.unicode_minus'] = False
-                print("⚠ 使用默认字体，中文可能显示为方块")
-            except Exception as e:
-                print(f"✗ 字体设置完全失败: {e}")
-        
-        # 测试中文显示
-        try:
-            import matplotlib.pyplot as plt
-            fig, ax = plt.subplots(figsize=(1, 1))
-            ax.text(0.5, 0.5, '测试', fontsize=12, ha='center')
-            ax.set_xlim(0, 1)
-            ax.set_ylim(0, 1)
-            ax.axis('off')
-            plt.close(fig)
-            print("✓ 中文字体测试通过")
-        except Exception as e:
-            print(f"✗ 中文字体测试失败: {e}")
 
     def _setup_figure(self, figsize: Optional[tuple] = None):
         """设置图形"""
@@ -505,6 +467,10 @@ class PlotGenerator:
         plt.tight_layout()
 
         return fig
+    
+    def show_figure(self):
+        """显示图表"""
+        self.current_fig.show()
 
 
 def demo():
@@ -585,9 +551,6 @@ def demo():
 
     print("\n所有图表已生成并保存到 output/ 目录")
     print("Base64 编码已生成，可用于网页显示或数据传输")
-
-    # 显示图表
-    plt.show()
 
 
 if __name__ == "__main__":
