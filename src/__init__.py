@@ -8,7 +8,7 @@ from .data import (
     generate_time_series_data,
     generate_sales_data,
     generate_customer_data,
-    save_dataframe
+    save_dataframe,
 )
 
 from .plot import PlotGenerator
@@ -18,8 +18,8 @@ __author__ = "plot_test team"
 
 __all__ = [
     "generate_time_series_data",
-    "generate_sales_data", 
+    "generate_sales_data",
     "generate_customer_data",
     "save_dataframe",
-    "PlotGenerator"
+    "PlotGenerator",
 ]

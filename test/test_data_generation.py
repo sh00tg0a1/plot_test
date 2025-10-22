@@ -4,13 +4,14 @@
 
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from src.data import (
     generate_time_series_data,
     generate_sales_data,
     generate_customer_data,
-    save_dataframe
+    save_dataframe,
 )
 
 
@@ -53,8 +54,8 @@ def test_save_functionality():
     sales_data = generate_sales_data(products=5, months=3)
 
     # 测试不同格式保存
-    save_dataframe(ts_data, 'test_time_series', 'csv')
-    save_dataframe(sales_data, 'test_sales', 'csv')
+    save_dataframe(ts_data, "test_time_series", "csv")
+    save_dataframe(sales_data, "test_sales", "csv")
 
     print("测试数据保存完成！")
 
